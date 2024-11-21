@@ -1,0 +1,19 @@
+<h1>Flashcards</h1>
+<div id="flashcards-container">
+    {% for card in flashcards %}
+    <div class="flashcard">
+        <div class="question">{{ card.question|safe }}</div>
+        <div class="answer" style="display:none;">{{ card.answer|safe }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.querySelectorAll('.flashcard').forEach(card => {
+        card.addEventListener('click', () => {
+            const answer = card.querySelector('.answer');
+            answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+</script>
+
