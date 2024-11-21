@@ -1,19 +1,25 @@
-<h1>Flashcards</h1>
-<div id="flashcards-container">
-    {% for card in flashcards %}
-    <div class="flashcard">
-        <div class="question">{{ card.question|safe }}</div>
-        <div class="answer" style="display:none;">{{ card.answer|safe }}</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+</head>
+<body>
+    <h1>Flashcards</h1>
+    <h1>Flashcards</h1>
+    <div id="flashcards-container">
+        <p>Number of flashcards: {{ flashcards|length }}</p>
+        {% for card in flashcards %}
+        <div class="flashcard">
+            <h2>{{ card.title }}</h2>
+            <p><strong>Question:</strong> {{ card.specific.question|safe }}</p>
+            <p><strong>Answer:</strong> {{ card.specific.answer|safe }}</p>
+        </div>
+        {% empty %}
+        <p>No flashcards found!</p>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-
-<script>
-    document.querySelectorAll('.flashcard').forEach(card => {
-        card.addEventListener('click', () => {
-            const answer = card.querySelector('.answer');
-            answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
-        });
-    });
-</script>
-
+    
+</body>
+</html>

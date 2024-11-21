@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ self.title }}</title>
+</head>
+<body>
+    <h1>{{ self.title }}</h1>
+    <p>{{ self.introduction }}</p>
+
+    <h2>Flashcards</h2>
+    {% if self.get_flashcards %}
+    <div id="flashcards-container">
+        {% for card in self.get_flashcards %}
+        <div class="flashcard">
+            <h3>{{ card.title }}</h3>
+            <p><strong>Question:</strong> {{ card.question|safe }}</p>
+            <p><strong>Answer:</strong> {{ card.answer|safe }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No flashcards available.</p>
+    {% endif %}
+</body>
+</html>
