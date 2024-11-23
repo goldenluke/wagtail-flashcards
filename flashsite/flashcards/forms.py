@@ -32,3 +32,20 @@ class NoTitleForm(WagtailAdminPageForm):
         if commit:
             page.save()
         return page
+
+
+class FlashcardInteractionForm(forms.Form):
+    action = forms.ChoiceField(
+        choices=[
+            ('next', 'Next'),
+            ('previous', 'Previous'),
+            ('flip', 'Flip'),
+            ('select', 'Select'),
+        ],
+        required=True,
+    )
+    difficulty = forms.ChoiceField(
+        choices=[('easy', 'Easy'), ('medium', 'Medium'), ('hard', 'Hard')],
+        required=False,
+    )
+    card_id = forms.IntegerField(required=True)

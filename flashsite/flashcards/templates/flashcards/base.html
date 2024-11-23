@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Flashcards{% endblock %}</title>
+
+    <!-- Incluindo o CSS com {% static %} -->
+    <link rel="stylesheet" href="{% static 'css/flashcards.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Flashcards</h1>
+        <!-- Aqui você pode colocar um menu de navegação, se necessário -->
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- O conteúdo das páginas será inserido aqui -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; {{ year }} Flashcards</p>
+    </footer>
+</body>
+</html>

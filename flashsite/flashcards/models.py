@@ -6,16 +6,23 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import MultiFieldPanel
 from django.utils.text import slugify
 from .forms import NoTitleForm
+from django.shortcuts import redirect
 
 class FlashcardPage(Page):
     question = models.TextField(blank=False)
     answer = models.TextField(blank=False)
+    difficulty = models.CharField(
+        max_length=20,
+        choices=[('easy', 'Easy'), ('medium', 'Medium'), ('hard', 'Hard')],
+        blank=True,
+    )
 
     base_form_class = NoTitleForm
 
     content_panels =  [
         FieldPanel('question'),
         FieldPanel('answer'),
+        FieldPanel('difficulty'),
     ]
 
     def full_clean(self, *args, **kwargs):
@@ -54,10 +61,17 @@ class FlashcardsIndexPage(Page):
     """A page that acts as an index for flashcards."""
 
     # Optional description or introduction for the index page
-    introduction = models.TextField(blank=True, help_text="Text to describe the flashcards.")
+    prompt = models.TextField(blank=True, help_text="Text to describe the flashcards.")
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='flashcard_index_pages',
+        help_text="The user who owns this flashcards index."
+    )
 
     content_panels = Page.content_panels + [
-        FieldPanel('introduction'),
+        FieldPanel('owner'),
+        FieldPanel('prompt'),
     ]
 
     @classmethod
@@ -71,4 +85,7 @@ class FlashcardsIndexPage(Page):
         from .models import FlashcardPage
         return self.get_children().live().specific().type(FlashcardPage)
 
+    def serve(self, request, *args, **kwargs):
+        # Redirecione para a view flashcard_view com o ID da página
+        return redirect('flashcard_view', page_id=self.id)
 

@@ -5,16 +5,17 @@ from django.contrib import admin
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
-from flashcards.views import flashcards_view
+from flashcards.views import flashcard_view
 
 from search import views as search_views
 
 urlpatterns = [
-    path('flashcards/', flashcards_view, name='flashcards'),
+    path('flashcards/', flashcard_view, name='flashcards'),
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    path('flashcards/<int:page_id>/', flashcard_view, name='flashcard_view'),
 ]
 
 

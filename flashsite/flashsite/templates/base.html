@@ -13,34 +13,38 @@
             {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
             {% endblock %}
         </title>
+        
         {% if page.search_description %}
         <meta name="description" content="{{ page.search_description }}" />
         {% endif %}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        {# Force all links in the live preview panel to be opened in a new tab #}
+        {# Base tag for live preview in Wagtail #}
         {% if request.in_preview_panel %}
         <base target="_blank">
         {% endif %}
 
-        {# Global stylesheets #}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/flashsite.css' %}">
-
+        {# Link CSS with cache busting #}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/flashsite.css' %}?v={{ timestamp|default:"1" }}">
+        
         {% block extra_css %}
-        {# Override this in templates to add extra stylesheets #}
+        {# Additional stylesheets can be added here #}
         {% endblock %}
     </head>
 
     <body class="{% block body_class %}{% endblock %}">
         {% wagtailuserbar %}
 
-        {% block content %}{% endblock %}
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
 
-        {# Global javascript #}
-        <script type="text/javascript" src="{% static 'js/flashsite.js' %}"></script>
-
+        {# Link JS with cache busting #}
+        <script type="text/javascript" src="{% static 'js/flashsite.js' %}?v={{ timestamp|default:"1" }}"></script>
+        
         {% block extra_js %}
-        {# Override this in templates to add extra javascript #}
+        {# Additional scripts can be added here #}
         {% endblock %}
     </body>
 </html>
