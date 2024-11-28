@@ -43,9 +43,14 @@ class FlashcardInteractionForm(forms.Form):
             ('select', 'Select'),
         ],
         required=True,
+        widget=forms.HiddenInput(),  # Oculta o campo no frontend
     )
     difficulty = forms.ChoiceField(
         choices=[('easy', 'Easy'), ('medium', 'Medium'), ('hard', 'Hard')],
         required=False,
+        widget=forms.HiddenInput(),  # Oculta o campo no frontend
     )
-    card_id = forms.IntegerField(required=True)
+    card_id = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(),  # Oculta o campo no frontend
+    )

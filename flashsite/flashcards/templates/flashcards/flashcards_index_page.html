@@ -1,27 +1,147 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ self.title }}</title>
-</head>
-<body>
-    <h1>{{ self.title }}</h1>
-    <p>{{ self.introduction }}</p>
+{% extends "base.html" %}
 
-    <h2>Flashcards</h2>
-    {% if self.get_flashcards %}
-    <div id="flashcards-container">
-        {% for card in self.get_flashcards %}
-        <div class="flashcard">
-            <h3>{{ card.title }}</h3>
-            <p><strong>Question:</strong> {{ card.question|safe }}</p>
-            <p><strong>Answer:</strong> {{ card.answer|safe }}</p>
-        </div>
-        {% endfor %}
+{% block content %}
+<div id="background-wrapper">
+<div id="main-container">
+<header>
+
+    <h1>{{ index_page.title }}</h1>
+    <p>by {{ index_page.owner.get_full_name }} ({{ index_page.owner.username }})</p>
+{% if index_page.id and index_page.owner != request.user %}
+<form method="get" action="{% url 'copy_flashcards_index' index_page.id %}" style="display: inline;">
+    <button type="submit" class="btn-clone">
+        <span class="material-icons" style="vertical-align: middle; margin-right: 5px;">content_copy</span>
+        Clone Deck
+    </button>
+</form>
+{% endif %}
+</header>
+
+{% if current_flashcard %}
+<div id="selected-flashcard" data-id="{{ current_flashcard.id }}"  class="{{ current_flashcard.difficulty|default:'no-difficulty' }}">
+    <p>
+        Card {{ current_flashcard_index }}:
+        {{ current_flashcard.question|slice:":50" }}
+        {% if current_flashcard.question|length > 50 %}...{% endif %}
+    </p>
+</div>
+{% endif %}
+
+
+<form method="post" id="button-container">
+    {% csrf_token %}
+    <div id="navigation-buttons">
+        <button id="previous-button" class="navigation-button" type="button" name="action" value="previous">
+            &lt;&lt; Previous
+        </button>
+        <button id="flip-button" class="navigation-button" type="button" name="action" value="flip">
+            Flip
+        </button>
+        <button id="next-button" class="navigation-button" type="button" name="action" value="next">
+            Next &gt;&gt;
+        </button>
     </div>
+</form>
+
+
+
+
+
+<div id="flashcard-container">
+    <div class="flashcard" id="flashcard">
+    <!-- Cartão Azul: Question -->
+        <div id="card-front" class="flashcard card-blue" style="display: {% if flipped %}none{% else %}block{% endif %};">
+            <p>{{ current_flashcard.question }}</p>
+        </div>
+        <!-- Cartão Vermelho: Answer -->
+        <div id="card-back" class="flashcard card-red" style="display: {% if flipped %}block{% else %}none{% endif %};">
+            <p>{{ current_flashcard.answer }}</p>
+        </div>
+    </div>
+</div>
+
+<form method="post" id="flip-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="flip">
+    <input type="hidden" name="card_id" value="{{ current_flashcard.id }}">
+</form>
+
+<div class="flashcard-media">
+    {% if current_flashcard.media %}
+        {% if current_flashcard.media.url|slice:"-4:" == ".mp4" or current_flashcard.media.url|slice:"-5:" == ".webm" %}
+            <video controls>
+                <source src="{{ current_flashcard.media.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% elif current_flashcard.media.url|slice:"-4:" == ".gif" or current_flashcard.media.url|slice:"-4:" == ".jpg" or current_flashcard.media.url|slice:"-4:" == ".png" %}
+            <img src="{{ current_flashcard.media.url }}" alt="Flashcard media">
+        {% else %}
+            <p>Unsupported file type.</p>
+        {% endif %}
+    {% else %}
+        <p>No media attached to this flashcard.</p>
+    {% endif %}
+</div>
+
+
+<!-- Formulário de dificuldade (somente para o autor) -->
+
+{% if is_author %}
+<p class="difficulty-info">How difficult is this card?</p>
+<div id="difficulty-buttons">
+<form method="post" id="difficulty-container">
+    {% csrf_token %}
+    <input type="hidden" id="card_id" name="card_id" value="{{ current_flashcard.id }}" data-id="{{ current_flashcard.id }}">
+
+    <button type="submit" name="difficulty" value="easy"
+            class="col s6 waves-effect btn green accent-3
+            {% if current_flashcard.difficulty == 'easy' %}highlight{% endif %}">
+        Easy
+    </button>
+    <button type="submit" name="difficulty" value="medium"
+            class="col s6 waves-effect btn amber darken-4
+            {% if current_flashcard.difficulty == 'medium' %}highlight{% endif %}">
+        Medium
+    </button>
+    <button type="submit" name="difficulty" value="hard"
+            class="col s6 waves-effect btn red accent-2
+            {% if current_flashcard.difficulty == 'hard' %}highlight{% endif %}">
+        Hard
+    </button>
+</form>
+</div>
+{% else %}
+<p class="difficulty-info">Clone this deck to assign difficulty</p>
+{% endif %}
+
+
+
+
+<button class="close-btn" onclick="toggleSidePanel()">×</button>
+<div id="side-panel" class="side-panel">
+    {% if flashcards and flashcards|length > 0 %}
+    <ul id="flashcards-list">
+        {% for flashcard in flashcards %}
+        <li data-id="{{ flashcard.id }}" data-difficulty="{{ flashcard.difficulty|default:'no-difficulty' }}" class="{{ flashcard.difficulty|default:'no-difficulty' }} {% if flashcard == current_flashcard %}selected{% endif %}">
+            <a href="#" onclick="selectFlashcard(event, ${flashcard.id}); return false;">
+                Card {{ forloop.counter }}: {{ flashcard.question|slice:":50" }}{% if flashcard.question|length > 50 %}...{% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
     {% else %}
     <p>No flashcards available.</p>
     {% endif %}
-</body>
-</html>
+</div>
+
+
+<button class="open-btn" onclick="toggleSidePanel()">☰</button>
+
+
+</div>
+</div>
+
+
+
+
+{% endblock %}

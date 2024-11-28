@@ -1,0 +1,113 @@
+/* Container do Flashcard */
+#flashcard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px; /* Altura do container */
+    margin: 20px;
+    position: relative; /* Necessário para alternar cartões */
+}
+
+/* Base de todos os Flashcards */
+#flashcard-container .flashcard {
+    position: absolute; /* Permite alternar entre cartões no mesmo lugar */
+    width: 400px; /* Largura dos cartões */
+    height: 200px; /* Altura dos cartões */
+    border-radius: 10px; /* Bordas arredondadas */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+    text-align: center;
+    padding: 10px;
+    box-sizing: border-box;
+    opacity: 0; /* Inicialmente invisível */
+    transition: opacity 0.3s ease-in-out; /* Transição suave */
+}
+
+/* Exibe o cartão visível */
+#flashcard-container .flashcard.visible {
+    opacity: 1; /* Torna visível */
+    z-index: 1; /* Garante que esteja acima */
+}
+
+/* Cartão Azul: Question */
+#flashcard-container .flashcard.card-blue {
+    background-color: #007bff; /* Fundo azul */
+    border: 2px solid #0056b3; /* Borda azul escuro */
+    color: #ffffff;
+}
+
+/* Cartão Vermelho: Answer */
+#flashcard-container .flashcard.card-red {
+    background-color: #dc3545; /* Fundo vermelho */
+    border: 2px solid #a71d2a; /* Borda vermelho escuro */
+    color: #ffffff;
+}
+
+/* Títulos dentro dos cartões */
+#flashcard-container .flashcard h2 {
+    margin: 0 0 10px; /* Margem abaixo do título */
+    font-size: 1.5rem;
+    text-transform: uppercase; /* Texto em maiúsculas */
+}
+
+/* Texto dentro dos cartões */
+#flashcard-container .flashcard p {
+    margin: 0;
+    font-size: 1.1rem; /* Tamanho padrão para o texto */
+    line-height: 1.5;
+}
+
+
+
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+li.easy a {
+    background-color: #d4edda; /* Verde claro */
+    color: #155724;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+li.medium a {
+    background-color: #ffeeba; /* Amarelo claro */
+    color: #856404;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+li.hard a {
+    background-color: #f8d7da; /* Vermelho claro */
+    color: #721c24;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+li.selected a {
+    border: 2px solid #007bff; /* Destaque azul para o selecionado */
+    background-color: #e7f1ff; /* Azul claro */
+    color: #0056b3;
+}
+
