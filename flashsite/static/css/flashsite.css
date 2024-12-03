@@ -1,5 +1,5 @@
 /* Aplicar estilos globais */
-body {
+#app-body {
     display: flex; /* Habilita flexbox no body */
     flex-direction: column; /* Coloca os elementos em coluna */
     justify-content: flex-start; /* Começa no topo */
@@ -18,6 +18,43 @@ header {
 
 }
 
+.loader {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-top: 8px solid red; /* Espessura do loader */
+    border-bottom: 8px solid blue;
+    border-left: 8px solid rgba(243, 243, 243, 0.4); /* 50% de opacidade */
+    border-right: 8px solid rgba(243, 243, 243, 0.4); /* 50% de opacidade */
+    border-radius: 50%; /* Torna o loader circular */
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Centralização */
+    z-index: 9999;
+    width: 10vw; /* Tamanho proporcional à largura da tela */
+    height: 10vw; /* Tamanho proporcional à largura da tela */
+    max-width: 100px; /* Limita o tamanho máximo */
+    max-height: 100px; /* Limita o tamanho máximo */
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Para telas muito pequenas (ex.: celulares) */
+@media (max-width: 768px) {
+    .loader {
+        width: 15vw; /* Aumenta o tamanho proporcionalmente */
+        height: 15vw;
+        left: 50%;
+    }
+}
 
 
 /* Estilo para o título principal */
@@ -37,7 +74,24 @@ header form {
     justify-content: center; /* Centraliza o conteúdo do botão */
 }
 
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaçamento entre o avatar e o texto */
+    margin: 10px;
+}
 
+.avatar-medium {
+    border-radius: 50%; /* Torna o avatar redondo */
+    width: 40px; /* Ajusta o tamanho do avatar */
+    height: 40px;
+    overflow: hidden;
+}
+
+.author-text {
+    margin: 0;
+    font-size: 14px;
+}
 
 /* Estilo do botão Clone Deck */
 header .btn-clone {
@@ -50,7 +104,7 @@ header .btn-clone {
     color: white; /* Cor do texto */
     background-color: #00796b; /* Cor de fundo */
     border: none; /* Remove bordas padrão */
-    border-radius: 5px; /* Bordas arredondadas */
+     /* Bordas arredondadas */
     cursor: pointer; /* Mostra o cursor de clique */
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Adiciona sombra */
     transition: background-color 0.3s ease; /* Transição suave ao hover */
@@ -118,7 +172,7 @@ header .btn-clone {
     color: #333; /* Texto escuro */
     text-decoration: none;
     display: block;
-    border-radius: 5px;
+
     border-style: solid;
     border-width: 2px;
     border-color: #333;
@@ -130,7 +184,7 @@ header .btn-clone {
     color: #155724;
     text-decoration: none;
     display: block;
-    border-radius: 5px;
+
     border-style: solid;
     border-width: 2px;
     border-color: #155724;
@@ -141,7 +195,7 @@ header .btn-clone {
     color: #856404;
     text-decoration: none;
     display: block;
-    border-radius: 5px;
+
     border-style: solid;
     border-width: 2px;
     border-color: #856404;
@@ -152,7 +206,7 @@ header .btn-clone {
     color: #721c24;
     text-decoration: none;
     display: block;
-    border-radius: 5px;
+
     border-style: solid;
     border-width: 2px;
     border-color: #721c24;
@@ -241,6 +295,40 @@ header .btn-clone {
     overflow-wrap: break-word; /* Permite quebra de palavras longas */
 }
 
+.flashcard-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+#question-media, #answer-media {
+    display: block; /* Visível por padrão */
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ocupa toda a largura disponível */
+    min-height: 300px; /* Garante altura mínima para dispositivos menores */
+    margin: 20px auto; /* Centraliza horizontalmente */
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
+    overflow: hidden; /* Evita que o conteúdo ultrapasse o container */
+    box-sizing: border-box; /* Inclui padding no cálculo do tamanho */
+    background-color: #f0f0f0;
+    border: 2px solid #333;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+}
+
+#answer-media {
+    display: none;
+}
+
+
 
 .difficulty-info
 {
@@ -275,7 +363,7 @@ header .btn-clone {
     text-align: center; /* Centraliza horizontalmente o texto */
     vertical-align: middle; /* Alinha verticalmente o texto */
     border: none; /* Remove bordas padrão */
-    border-radius: 5px; /* Bordas arredondadas */
+     /* Bordas arredondadas */
     cursor: pointer; /* Mostra o cursor ao passar o mouse */
     display: flex; /* Configura flexbox no botão */
     justify-content: center; /* Centraliza horizontalmente */
@@ -283,15 +371,33 @@ header .btn-clone {
     transition: background-color 0.3s ease; /* Animação para hover */
 }
 
-
-#difficulty-container button[name="action"][value="flip"] {
-    background-color: #f1c40f; /* Amarelo */
+/* Botão verde (Easy) */
+#difficulty-buttons button.easy {
+background-color: #4CAF50; /* Verde */
 }
 
-/* Efeito de hover */
-#difficulty-container button:hover {
-    opacity: 0.9; /* Reduz opacidade no hover */
+#difficulty-buttons button.easy:hover {
+background-color: #45a049;
 }
+
+/* Botão amarelo (Medium) */
+#difficulty-buttons button.medium {
+background-color: #FF9800; /* Amarelo */
+}
+
+#difficulty-buttons button.medium:hover {
+background-color: #e68a00;
+}
+
+/* Botão vermelho (Hard) */
+#difficulty-buttons button.hard {
+background-color: #F44336; /* Vermelho */
+}
+
+#difficulty-buttons button.hard:hover {
+background-color: #d32f2f;
+}
+
 
 /* Define uma largura mínima para evitar botões muito pequenos */
 #difficulty-container button {
@@ -311,61 +417,76 @@ button.highlight {
 
 /* Contêiner principal dos botões */
 #button-container {
-    display: flex;
-    justify-content: center; /* Centraliza os botões horizontalmente */
-    margin: 20px 0; /* Espaçamento acima e abaixo */
+display: flex;
+justify-content: center; /* Centraliza o contêiner */
+margin: 20px 0; /* Espaçamento acima e abaixo */
 }
 
 /* Contêiner para os botões de navegação */
 #navigation-buttons {
-    display: flex;
-    justify-content: space-between; /* Espaçamento uniforme entre os botões */
-    gap: 15px; /* Espaçamento entre os botões */
-    width: 100%; /* Largura total */
-    max-width: 500px; /* Largura máxima */
+display: flex;
+gap: 15px; /* Espaçamento entre os botões */
+width: 100%; /* Ocupa a largura total */
+max-width: 500px; /* Largura máxima para layout */
+justify-content: center; /* Centraliza os botões */
 }
+
 
 /* Botões individuais */
 .navigation-button {
-    display: flex;
-    align-items: center; /* Alinha ícones e texto verticalmente */
-    justify-content: center; /* Centraliza o conteúdo horizontalmente */
-    text-transform: uppercase; /* Texto em letras maiúsculas */
-    font-size: 14px; /* Tamanho da fonte */
-    padding: 10px; /* Espaçamento interno */
-    flex: 1; /* Todos os botões terão o mesmo tamanho */
-    border-radius: 5px; /* Bordas arredondadas */
-    background-color: #00796b; /* Cor do botão */
-    color: white; /* Cor do texto */
-    border: none; /* Remove bordas padrão */
-    cursor: pointer; /* Mostra o cursor de clique */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Adiciona sombra */
-    transition: background-color 0.3s ease; /* Transição suave ao hover */
-}
+    -webkit-font-smoothing: auto;
+    -moz-appearance: none;
+    background-color: var(--w-color-surface-button-default);
+    border: 1px solid var(--w-color-surface-button-default);
+    border-radius: .1875rem;
+    color: var(--w-color-text-button);
+    font-size: .875rem;
+    font-weight: 400;
+    height: 2.25em;
+    line-height: calc(2.25em - 2px);
+    outline-offset: 3px;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    transition: background-color .1s ease;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: auto;
 
-/* Efeito ao passar o mouse */
-.navigation-button:hover {
-    background-color: #004d40; /* Cor mais escura no hover */
+
+
+
+    display: inline-flex; /* Ícones e texto em linha flexível */
+    align-items: center; /* Alinha ícones e texto verticalmente */
+    justify-content: center; /* Centraliza o conteúdo */
+    font-size: 16px; /* Tamanho da fonte */
+    padding: 10px 16px; /* Espaçamento interno */
+    flex: 1; /* Botões ocupam espaço uniforme */
+
+    color: white; /* Cor do texto */
+    cursor: pointer; /* Muda o cursor no hover */
+    transition: background-color 0.3s ease; /* Transição suave no hover */
+    min-width: 120px; /* Define uma largura mínima */
 }
 
 /* Ícones dentro dos botões */
 .navigation-button .material-icons {
-    font-size: 20px; /* Tamanho uniforme para os ícones */
-    margin-right: 5px; /* Espaço entre o ícone e o texto */
-    vertical-align: middle; /* Alinha os ícones com o texto */
+    font-size: 20px; /* Tamanho dos ícones */
+    margin-right: 8px; /* Espaçamento entre ícone e texto */
+    vertical-align: middle; /* Alinha ícones verticalmente com texto */
 }
 
-/* Ícone no botão Next */
-.navigation-button:last-child .material-icons {
-    margin-right: 0; /* Remove o espaçamento à direita */
-    margin-left: 5px; /* Adiciona espaçamento entre o texto e o ícone */
+/* Remove margem direita do ícone no botão "Next" */
+#next-button .material-icons {
+margin-right: 0;
 }
 
-/* Ajustar largura mínima para evitar botões pequenos */
-.navigation-button {
-    min-width: 120px; /* Largura mínima */
+/* Hover nos botões */
+.navigation-button:hover {
+    background-color: #004d40; /* Cor mais escura no hover */
 }
-}
+
+
 
 
 .btn-clone {
@@ -374,7 +495,7 @@ button.highlight {
     padding: 10px 20px;
     margin-top: 5px;
     border: none;
-    border-radius: 5px;
+
     font-size: 1rem;
     line-height: 1;
     text-decoration: none;
@@ -404,10 +525,10 @@ li.no-difficulty a {
     text-decoration: none;
     display: block;
     padding: 10px;
-    border-radius: 5px;
+
     border-style: solid;
     border-width: 2px;
-    border-color: #333;
+    border-color: #186076;
 }
 
 li.no-difficulty a:hover {
@@ -418,18 +539,19 @@ li.no-difficulty a:hover {
 
 
 /* Painel lateral */
+
 .side-panel {
     position: fixed;
     top: 0;
-    left: -400px; /* Oculto por padrão */
+    right: -400px; /* Inicialmente fora da tela à direita */
     width: 300px;
     height: 100%;
     background-color: #2e1f5e;
     color: white;
-    transition: left 0.3s ease; /* Transição suave */
+    transition: right 0.3s ease; /* Transição ao abrir/fechar */
     z-index: 1000;
     padding: 10px;
-    overflow-y: auto; /* Adiciona rolagem interna */
+    overflow-y: auto;
 }
 
 /* Painel lateral aberto */
@@ -440,6 +562,7 @@ li.no-difficulty a:hover {
 /* Quando o menu lateral está aberto */
 .side-panel.open ~ #main-container {
     margin-left: 300px; /* Ajuste para acomodar o menu */
+
 }
 
 /* Botão de fechar (dentro do painel lateral) */
@@ -493,8 +616,8 @@ li.no-difficulty a:hover {
 @media (min-width: 769px) {
     /* Manter o painel sempre visível em telas maiores */
     .side-panel {
-        left: 0;
-        width: 300px;
+    right: 0; /* Mover para o lado direito */
+    width: 300px;
     }
 
     .open-btn {
@@ -502,7 +625,8 @@ li.no-difficulty a:hover {
     }
 
     #main-container {
-    margin-left: 300px; /* Desloca o conteúdo principal para o lado */
+    margin-left: 10px;
+    margin-right: 300px;/* Desloca o conteúdo principal para o lado */
     transition: margin-left 0.3s ease; /* Transição suave */
     }
 }
@@ -525,7 +649,7 @@ ul {
 
 #flashcards-list li {
     margin: 5px 0;
-    border-radius: 5px;
+
     cursor: pointer;
 }
 
@@ -535,7 +659,7 @@ ul {
     text-decoration: none;
     display: block;
     padding: 10px;
-    border-radius: 5px;
+
     transition: border-color 0.3s, background-color 0.3s; /* Transições suaves */
     border-style: solid;
     border-width: 2px;
@@ -553,7 +677,7 @@ ul {
     text-decoration: none;
     display: block;
     padding: 10px;
-    border-radius: 5px;
+
     transition: border-color 0.3s, background-color 0.3s;
     border-style: solid;
     border-width: 2px;
@@ -571,7 +695,7 @@ ul {
     text-decoration: none;
     display: block;
     padding: 10px;
-    border-radius: 5px;
+
     transition: border-color 0.3s, background-color 0.3s;
     border-style: solid;
     border-width: 2px;
@@ -599,7 +723,7 @@ ul {
     text-decoration: none;
     display: block;
     padding: 10px;
-    border-radius: 5px;
+
     transition: border-color 0.3s, background-color 0.3s;
 }
 

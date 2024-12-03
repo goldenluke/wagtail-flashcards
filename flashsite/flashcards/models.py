@@ -11,9 +11,53 @@ from wagtail.models import Orderable
 from modelcluster.fields import ParentalKey
 from django.shortcuts import render
 from wagtail.snippets.models import register_snippet
-from django.utils.html import format_html
 
-@register_snippet
+class RootPage(Page):
+    """
+    Modelo de página raiz vazio. Serve apenas como um contêiner inicial para subpáginas.
+    """
+    subpage_types = ['flashcards.FolderPage', 'flashcards.FlashcardsIndexPage', 'flashcards.Box']  # Tipos de subpáginas permitidas
+    parent_page_types = []  # Deve ser a raiz, não pode ter pais
+
+    # Nenhum conteúdo ou template necessário
+    class Meta:
+        verbose_name = "Root"
+        verbose_name_plural = "Root"
+
+
+
+class Box(Page):
+    """
+    Modelo que representa a página inicial (Box).
+    """
+    subpage_types = ['flashcards.FolderPage', 'flashcards.FlashcardsIndexPage']
+    parent_page_types = ['flashcards.RootPage']
+
+    def serve(self, request):
+        """
+        Restringe o acesso ao `Box` para apenas o `owner`.
+        """
+        if self.owner != request.user:
+            return redirect('wagtailadmin_home')
+        return super().serve(request)
+
+    class Meta:
+        verbose_name = "Folders"
+        verbose_name_plural = "Folders"
+
+
+class FolderPage(Page):
+    """
+    Uma página simples para organizar FlashcardsIndexPage em pastas.
+    """
+    subpage_types = ['flashcards.FlashcardsIndexPage', 'flashcards.FolderPage']  # Use o caminho completo para evitar erros
+    parent_page_types = ['flashcards.Box']
+
+    class Meta:
+        verbose_name = "Folder"
+        verbose_name_plural = "Folders"
+
+
 class Flashcard(Orderable):
     # Relaciona cada Flashcard a um FlashcardsIndexPage
     index_page = ParentalKey(
@@ -31,26 +75,7 @@ class Flashcard(Orderable):
         blank=True,
     )
     media = models.FileField(upload_to='flashcards_media/', null=True, blank=True)  # Novo campo
-
-
-
-
-    def question_media_thumbnail(self):
-        print("Rendering question media thumbnail")  # Debug
-        if self.question_media and self.question_media.url:
-            if self.question_media.url.lower().endswith(('.jpg', '.png', '.gif', '.jpeg')):
-                return format_html('<img src="{}" style="height: 100px;" />', self.question_media.url)
-            return format_html('<a href="{}">Download</a>', self.question_media.url)
-        return "No file"
-
-    def answer_media_thumbnail(self):
-        print("Rendering answer media thumbnail")  # Debug
-        if self.answer_media and self.answer_media.url:
-            if self.answer_media.url.lower().endswith(('.jpg', '.png', '.gif', '.jpeg')):
-                return format_html('<img src="{}" style="height: 100px;" />', self.answer_media.url)
-            return format_html('<a href="{}">Download</a>', self.answer_media.url)
-        return "No file"
-
+    position = models.PositiveIntegerField(default=0)
 
     panels = [
         FieldPanel('question'),
@@ -60,12 +85,11 @@ class Flashcard(Orderable):
         FieldPanel('difficulty'),
     ]
 
+    class Meta:
+        ordering = ['position']
+
     def __str__(self):
         return self.question[:50]
-
-    class Meta:
-        verbose_name = "Flashcard"
-        verbose_name_plural = "Flashcards"
 
 
 from wagtail.admin.viewsets.model import ModelViewSet
@@ -79,6 +103,7 @@ class FlashcardViewSet(ModelViewSet):
     list_display = ("question", "difficulty")
     search_fields = ("question", "answer")
 
+from wagtail.search import index
 
 class FlashcardsIndexPage(Page):
     """A page that acts as an index for flashcards."""
@@ -89,26 +114,31 @@ class FlashcardsIndexPage(Page):
         blank=True,
         help_text="Paste the array of flashcards in the format: 'question::answer' (one per line).",
     )
+    category = models.CharField(max_length=100, blank=True, null=True)
 
     content_panels = Page.content_panels + [
+        FieldPanel('category'),
         FieldPanel('prompt'),
         FieldPanel('chatgpt_answer'),
         InlinePanel('flashcards', label="Flashcards"),
     ]
 
+    search_fields = Page.search_fields + [
+    index.SearchField('title'),
+    index.FilterField('owner'),
+    index.FilterField('category'),
+    ]
+
+
     def get_flashcards(self):
         # Retorna todos os flashcards associados a esta página
-        return self.flashcards.all()
+        return self.flashcards.order_by('position')
 
     def serve(self, request):
         # Determinar o índice atual do flashcard
         current_card_index = int(request.session.get('current_card_index', 0))
         flipped = request.session.get('flipped', False)
         username = self.owner.username  # Obtém o nome de usuário do dono da página
-        if request.path != f"/{username}/{self.id}/":
-            return redirect("flashcard_view", username=username, page_id=self.id)
-
-        # Redireciona para a URL com username e page_id
         if request.path != f"/{username}/{self.id}/":
             return redirect("flashcard_view", username=username, page_id=self.id)
 
@@ -168,6 +198,9 @@ class FlashcardsIndexPage(Page):
             "flipped": flipped,
             "is_author": is_author,
         })
+    class Meta:
+        verbose_name = "Deck"
+        verbose_name_plural = "Decks"
 
 
     def save(self, *args, **kwargs):
@@ -193,6 +226,10 @@ class FlashcardsIndexPage(Page):
 
             # Cria flashcards em massa
             Flashcard.objects.bulk_create(flashcards_to_create)
+
+
+
+
 
 
 

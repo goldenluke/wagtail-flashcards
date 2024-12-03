@@ -1,4 +1,6 @@
+{% extends "wagtailadmin/base.html" %}
 {% load static wagtailcore_tags wagtailuserbar %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,12 +33,13 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/alternative.css' %}?v={{ timestamp|default:"1" }}">
         
         {% block extra_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{% static 'wagtailadmin/css/panels.css' %}">
+<link rel="stylesheet" href="{% static 'wagtailadmin/css/admin.css' %}">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         {% endblock %}
     </head>
 
-    <body class="{% block body_class %}{% endblock %}">
+    <body class="app-body">
         {% wagtailuserbar %}
 
         <main>
@@ -50,6 +53,7 @@
         {% block extra_js %}
         <script src="{% static 'flashcards/js/flashcards.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="{% static 'wagtailadmin/js/core.js' %}"></script>
         {% endblock %}
     </body>
 </html>

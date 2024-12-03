@@ -1,12 +1,27 @@
 {% extends "base.html" %}
-
+{% load i18n wagtailadmin_tags %}
 {% block content %}
+<script>
+    const csrfToken = "{{ csrf_token }}";
+</script>
+<div id="page-current-id" data-id="{{ page_id }}"></div>
+<div id="app-body">
 <div id="background-wrapper">
 <div id="main-container">
+<div class="loader" id="loader"></div>
 <header>
 
     <h1>{{ index_page.title }}</h1>
-    <p>by {{ index_page.owner.get_full_name }} ({{ index_page.owner.username }})</p>
+
+
+<div class="author-info">
+    {% avatar user=index_page.owner classname="avatar-medium" size="medium" %}
+    <p class="author-text">
+        by {{ index_page.owner.get_full_name }} ({{ index_page.owner.username }})
+    </p>
+</div>
+
+
 {% if index_page.id and index_page.owner != request.user %}
 <form method="get" action="{% url 'copy_flashcards_index' index_page.id %}" style="display: inline;">
     <button type="submit" class="btn-clone">
@@ -32,13 +47,13 @@
     {% csrf_token %}
     <div id="navigation-buttons">
         <button id="previous-button" class="navigation-button" type="button" name="action" value="previous">
-            &lt;&lt; Previous
+            <span class="material-icons">arrow_back</span>
         </button>
         <button id="flip-button" class="navigation-button" type="button" name="action" value="flip">
-            Flip
+            <span class="material-icons">cached</span>
         </button>
         <button id="next-button" class="navigation-button" type="button" name="action" value="next">
-            Next &gt;&gt;
+            <span class="material-icons">arrow_forward</span>
         </button>
     </div>
 </form>
@@ -67,21 +82,37 @@
 </form>
 
 <div class="flashcard-media">
-    {% if current_flashcard.media %}
-        {% if current_flashcard.media.url|slice:"-4:" == ".mp4" or current_flashcard.media.url|slice:"-5:" == ".webm" %}
-            <video controls>
-                <source src="{{ current_flashcard.media.url }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        {% elif current_flashcard.media.url|slice:"-4:" == ".gif" or current_flashcard.media.url|slice:"-4:" == ".jpg" or current_flashcard.media.url|slice:"-4:" == ".png" %}
-            <img src="{{ current_flashcard.media.url }}" alt="Flashcard media">
-        {% else %}
-            <p>Unsupported file type.</p>
+    <div id="question-media" class="media-content">
+        {% if current_flashcard.question_media %}
+            {% if current_flashcard.question_media.url|slice:"-4:" == ".mp4" or current_flashcard.question_media.url|slice:"-5:" == ".webm" %}
+                <video controls>
+                    <source src="{{ current_flashcard.question_media.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% elif current_flashcard.question_media.url|slice:"-4:" == ".gif" or current_flashcard.question_media.url|slice:"-4:" == ".jpg" or current_flashcard.question_media.url|slice:"-4:" == ".png" %}
+                <img src="{{ current_flashcard.question_media.url }}" alt="Flashcard question media">
+            {% else %}
+                <p>Unsupported file type.</p>
+            {% endif %}
         {% endif %}
-    {% else %}
-        <p>No media attached to this flashcard.</p>
-    {% endif %}
+    </div>
+
+    <div id="answer-media" class="media-content">
+        {% if current_flashcard.answer_media %}
+            {% if current_flashcard.answer_media.url|slice:"-4:" == ".mp4" or current_flashcard.answer_media.url|slice:"-5:" == ".webm" %}
+                <video controls>
+                    <source src="{{ current_flashcard.answer_media.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% elif current_flashcard.answer_media.url|slice:"-4:" == ".gif" or current_flashcard.answer_media.url|slice:"-4:" == ".jpg" or current_flashcard.answer_media.url|slice:"-4:" == ".png" %}
+                <img src="{{ current_flashcard.answer_media.url }}" alt="Flashcard answer media">
+            {% else %}
+                <p>Unsupported file type.</p>
+            {% endif %}
+        {% endif %}
+    </div>
 </div>
+
 
 
 <!-- Formulário de dificuldade (somente para o autor) -->
@@ -94,17 +125,17 @@
     <input type="hidden" id="card_id" name="card_id" value="{{ current_flashcard.id }}" data-id="{{ current_flashcard.id }}">
 
     <button type="submit" name="difficulty" value="easy"
-            class="col s6 waves-effect btn green accent-3
+            class="easy button
             {% if current_flashcard.difficulty == 'easy' %}highlight{% endif %}">
         Easy
     </button>
     <button type="submit" name="difficulty" value="medium"
-            class="col s6 waves-effect btn amber darken-4
+            class="medium button
             {% if current_flashcard.difficulty == 'medium' %}highlight{% endif %}">
         Medium
     </button>
     <button type="submit" name="difficulty" value="hard"
-            class="col s6 waves-effect btn red accent-2
+            class="hard button
             {% if current_flashcard.difficulty == 'hard' %}highlight{% endif %}">
         Hard
     </button>
@@ -117,7 +148,15 @@
 
 
 
-<button class="close-btn" onclick="toggleSidePanel()">×</button>
+
+
+
+<button class="open-btn" onclick="toggleSidePanel()"><span class="material-icons">menu_open</span></button>
+
+
+</div>
+</div>
+<button class="close-btn" onclick="toggleSidePanel()"><span class="material-icons">chevron_left</span></button>
 <div id="side-panel" class="side-panel">
     {% if flashcards and flashcards|length > 0 %}
     <ul id="flashcards-list">
@@ -133,14 +172,7 @@
     <p>No flashcards available.</p>
     {% endif %}
 </div>
-
-
-<button class="open-btn" onclick="toggleSidePanel()">☰</button>
-
-
 </div>
-</div>
-
 
 
 

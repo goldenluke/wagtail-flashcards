@@ -207,7 +207,7 @@ STORAGES = {
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "flashsite"
+WAGTAIL_SITE_NAME = "MemorAI"
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html

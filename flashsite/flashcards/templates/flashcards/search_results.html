@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Flashcards</title>
+</head>
+<body>
+    <h1>Search Flashcards</h1>
+
+    <!-- Formulário de Busca -->
+    <form method="get" action="{% url 'search_flashcards' %}">
+        <input type="text" name="q" placeholder="Search title" value="{{ query }}">
+        <input type="text" name="owner" placeholder="Owner username" value="{{ owner }}">
+        <input type="text" name="category" placeholder="Category" value="{{ category }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Resultados -->
+    <ul>
+        {% for flashcard in page_obj.object_list %}
+            <li>
+                <a href="{{ flashcard.url }}">{{ flashcard.title }}</a> by {{ flashcard.owner.username }}
+                <p>Category: {{ flashcard.category }}</p>
+            </li>
+        {% empty %}
+            <p>No flashcards found.</p>
+        {% endfor %}
+    </ul>
+
+    <!-- Paginação -->
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&owner={{ owner }}&category={{ category }}">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <strong>{{ num }}</strong>
+            {% else %}
+                <a href="?page={{ num }}&q={{ query }}&owner={{ owner }}&category={{ category }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&owner={{ owner }}&category={{ category }}">Next</a>
+        {% endif %}
+    </div>
+</body>
+</html>

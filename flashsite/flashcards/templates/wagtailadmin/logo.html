@@ -1,0 +1,28 @@
+{% load wagtailadmin_tags %}
+{% spaceless %}
+    {% if wordmark %}
+        <svg class="{% classnames "icon-wagtail" classname %}" role="img" aria-label="Wagtail" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 427 182" fill="none">
+  <!-- Fundo transparente -->
+  <rect width="427" height="182" fill="transparent" />
+
+  <!-- Logotipo geométrico de flashcards -->
+  <rect x="20" y="60" width="120" height="80" fill="#3498db" rx="10" ry="10" transform="rotate(-10 80 90)" />
+  <rect x="60" y="80" width="120" height="80" fill="#e74c3c" rx="10" ry="10" transform="rotate(10 120 110)" />
+
+  <!-- Texto MemorAI com espaçamento ajustado -->
+  <text x="200" y="120" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji'" font-size="52" fill="#2E1F5E" font-weight="bold" letter-spacing="-0.5">
+    Memor<tspan fill="#e74c3c">A</tspan><tspan fill="#3498db">I</tspan>
+  </text>
+</svg>
+
+        </svg>
+    {% else %}
+        <svg class="{% classnames "icon-wagtail" classname %}" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 225 274" fill="none">
+  <rect width="200" height="200" fill="transparent" />
+  <rect x="20" y="50" width="120" height="80" fill="#3498db" rx="10" ry="10" transform="rotate(-10 80 90)" />
+  <rect x="60" y="70" width="120" height="80" fill="#e74c3c" rx="10" ry="10" transform="rotate(10 120 110)" />
+
+
+        </svg>
+    {% endif %}
+{% endspaceless %}

@@ -15,7 +15,7 @@ def flashcard_view(request, username, page_id):
     index_page = get_object_or_404(FlashcardsIndexPage, id=page_id)
 
     # Obtém os flashcards associados à FlashcardsIndexPage
-    flashcards = Flashcard.objects.filter(index_page=index_page).order_by('id')
+    flashcards = Flashcard.objects.filter(index_page=index_page).order_by('position')
     total_flashcards = flashcards.count()
 
     if total_flashcards == 0:
@@ -65,6 +65,7 @@ def flashcard_view(request, username, page_id):
     print(f"Flashcard ID: {current_flashcard.id}, Media: {current_flashcard.media}")
     print(f"Media URL: {current_flashcard.media.url if current_flashcard.media else 'No media'}")
     return render(request, 'flashcards/flashcards_index_page.html', {
+        'page_id': page_id,
         'index_page': index_page,
         'flashcards': flashcards,
         'current_flashcard': current_flashcard,
@@ -82,16 +83,16 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
-def flashcard_interaction(request):
-    # Verifica se a requisição é POST e AJAX
+def flashcard_interaction(request, page_id):
     if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        # Obtém a ação enviada no corpo da requisição
         action = request.POST.get('action')
         if not action:
             return JsonResponse({'error': 'No action specified'}, status=400)
 
-        # Obtém a lista de flashcards e o índice atual
-        flashcards = Flashcard.objects.all()  # Ajuste conforme a lógica do seu modelo
+        index_page = get_object_or_404(FlashcardsIndexPage, id=page_id)
+
+        # Obtém os flashcards associados à FlashcardsIndexPage
+        flashcards = Flashcard.objects.filter(index_page=index_page).order_by('position')
         total_flashcards = flashcards.count()
 
         if total_flashcards == 0:
@@ -100,48 +101,48 @@ def flashcard_interaction(request):
         current_card_index = int(request.session.get('current_card_index', 0))
         flipped = request.session.get('flipped', False)
 
-        # Lógica para manipular as ações
         if action == 'next':
             current_card_index = (current_card_index + 1) % total_flashcards
             flipped = False
-
         elif action == 'previous':
             current_card_index = (current_card_index - 1 + total_flashcards) % total_flashcards
             flipped = False
-
         elif action == 'flip':
             flipped = not flipped
-
         else:
             return JsonResponse({'error': 'Unknown action'}, status=400)
 
-        # Atualiza o índice e o estado flipped na sessão
         request.session['current_card_index'] = current_card_index
         request.session['flipped'] = flipped
 
-        # Obtém o flashcard atual
+        flashcard_ids = list(flashcards.values_list('id', flat=True))
         current_flashcard = flashcards[current_card_index]
 
-        # Retorna os dados para o frontend
         return JsonResponse({
             'id': current_flashcard.id,
             'question': current_flashcard.question,
             'answer': current_flashcard.answer,
             'flipped': flipped,
-            'index': current_card_index + 1,  # Para exibição (baseado em 1)
+            'index': current_card_index + 1,
             'total': total_flashcards,
             'difficulty': current_flashcard.difficulty,
+            'question_media_url': current_flashcard.question_media.url if current_flashcard.question_media else None,
+            'answer_media_url': current_flashcard.answer_media.url if current_flashcard.answer_media else None,
         })
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
+
 @csrf_exempt
-def flashcards_list(request):
+def flashcards_list(request, page_id):
     # Verifica se a requisição é GET e AJAX
     if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # Obtém todos os flashcards
-        flashcards = Flashcard.objects.all()
+        index_page = get_object_or_404(FlashcardsIndexPage, id=page_id)
+
+        # Obtém os flashcards associados à FlashcardsIndexPage
+        flashcards = Flashcard.objects.filter(index_page=index_page).order_by('position')
         if not flashcards.exists():
             return JsonResponse({'error': 'No flashcards available'}, status=404)
 
@@ -162,9 +163,10 @@ def flashcards_list(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
+
+
 @csrf_exempt
-def select_flashcard(request):
-    # Verifica se a requisição é POST e AJAX
+def select_flashcard(request, page_id):
     if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         card_id = request.POST.get('card_id')
 
@@ -172,60 +174,68 @@ def select_flashcard(request):
             return JsonResponse({'error': 'No card_id provided'}, status=400)
 
         try:
-            # Obtém o flashcard pelo ID
-            flashcard = Flashcard.objects.get(id=card_id)
+            index_page = get_object_or_404(FlashcardsIndexPage, id=page_id)
 
-            # Atualiza a sessão para refletir o flashcard selecionado
-            request.session['current_card_index'] = int(card_id) - 1
+            # Obtém os flashcards associados à FlashcardsIndexPage
+            flashcards = Flashcard.objects.filter(index_page=index_page).order_by('position')
+            flashcard = flashcards.get(id=card_id)
+
+            # Calcule o índice real do flashcard na lista
+            flashcard_ids = list(flashcards.values_list('id', flat=True))
+            current_card_index = flashcard_ids.index(flashcard.id)
+
+            # Atualiza a sessão
+            request.session['current_card_index'] = current_card_index
             request.session['flipped'] = False
+            current_flashcard = flashcards[current_card_index]
 
-            # Retorna os dados do flashcard selecionado
             return JsonResponse({
                 'id': flashcard.id,
                 'question': flashcard.question,
                 'answer': flashcard.answer,
                 'difficulty': flashcard.difficulty,
+                'index': current_card_index + 1,  # Exibição baseada em 1
+                'question_media_url': current_flashcard.question_media.url if current_flashcard.question_media else None,
+                'answer_media_url': current_flashcard.answer_media.url if current_flashcard.answer_media else None,
+
             })
         except Flashcard.DoesNotExist:
             return JsonResponse({'error': 'Flashcard not found'}, status=404)
+        except ValueError:
+            return JsonResponse({'error': 'Flashcard ID not in list'}, status=400)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-
 @csrf_exempt
-def select_flashcard(request):
-    # Verifica se a requisição é POST e AJAX
-    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        card_id = request.POST.get('card_id')
+def get_current_flashcard(request):
+    if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        flashcards = Flashcard.objects.all()
+        if not flashcards.exists():
+            return JsonResponse({'error': 'No flashcards available'}, status=404)
 
-        if not card_id:
-            return JsonResponse({'error': 'No card_id provided'}, status=400)
+        current_card_index = request.session.get('current_card_index', 0)
+        flipped = request.session.get('flipped', False)
 
         try:
-            # Obtém o flashcard pelo ID
-            flashcard = Flashcard.objects.get(id=card_id)
-
-            # Atualiza a sessão para refletir o flashcard selecionado
-            request.session['current_card_index'] = int(card_id) - 1
-            request.session['flipped'] = False
-
-            # Retorna os dados do flashcard selecionado
+            current_flashcard = flashcards[current_card_index]
             return JsonResponse({
-                'id': flashcard.id,
-                'question': flashcard.question,
-                'answer': flashcard.answer,
-                'difficulty': flashcard.difficulty,
-                'index': request.session['current_card_index'] + 1,
+                'id': current_flashcard.id,
+                'question': current_flashcard.question,
+                'answer': current_flashcard.answer,
+                'flipped': flipped,
+                'difficulty': current_flashcard.difficulty,
+                'question_media_url': current_flashcard.question_media.url if current_flashcard.question_media else None,
+                'answer_media_url': current_flashcard.answer_media.url if current_flashcard.answer_media else None,
             })
-        except Flashcard.DoesNotExist:
-            return JsonResponse({'error': 'Flashcard not found'}, status=404)
+        except IndexError:
+            return JsonResponse({'error': 'Invalid flashcard index'}, status=400)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 
 @csrf_exempt
-def assign_difficulty(request):
+def assign_difficulty(request, page_id):
     if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         difficulty = request.POST.get('difficulty')
         card_id = request.POST.get('card_id')
@@ -234,9 +244,13 @@ def assign_difficulty(request):
             return JsonResponse({'error': 'Invalid data'}, status=400)
 
         try:
-            flashcard = Flashcard.objects.get(id=card_id)
+            # Filtra apenas os flashcards associados ao page_id
+            flashcard = Flashcard.objects.get(id=card_id, index_page_id=page_id)
             flashcard.difficulty = difficulty
             flashcard.save()
+
+            # Calcula o índice do flashcard considerando apenas os flashcards do mesmo page_id
+            index = Flashcard.objects.filter(index_page_id=page_id, id__lte=flashcard.id).order_by('id').count()
 
             return JsonResponse({
                 'success': True,
@@ -244,7 +258,7 @@ def assign_difficulty(request):
                 'card_id': flashcard.id,
                 'question': flashcard.question,
                 'answer': flashcard.answer,
-                'index': list(Flashcard.objects.values_list('id', flat=True)).index(flashcard.id) + 1,
+                'index': index,
             })
         except Flashcard.DoesNotExist:
             return JsonResponse({'error': 'Flashcard not found'}, status=404)
@@ -265,6 +279,9 @@ from django.utils.text import slugify
 from .models import FlashcardsIndexPage, Flashcard
 from django.core.cache import cache
 from django.contrib import messages
+
+
+
 
 
 

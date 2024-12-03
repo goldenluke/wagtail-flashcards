@@ -24,31 +24,35 @@ class CloneFlashcardsMenuItem(ActionMenuItem):
         return reverse("copy_flashcards_index", args=[page.id])
 
 
-from .models import Flashcard
 
-class FlashcardViewSet(ModelViewSet):
-    model = Flashcard
-    menu_label = "Flashcards"
-    menu_icon = "form"  # Escolha o ícone adequado (https://fontawesome.com/icons)
-    menu_order = 300
-    add_to_admin_menu = True
-    list_display = ("question", "difficulty")
-    search_fields = ("question", "answer")
 
-@hooks.register("register_admin_viewset")
-def register_flashcard_viewset():
-    return FlashcardViewSet("flashcards")
+
+from wagtail.models import Page
+
+@hooks.register("construct_explorer_page_queryset")
+def restrict_pages_to_owner(parent_page, pages, request):
+    """
+    Restringe a visualização de páginas apenas ao dono no explorador de páginas.
+    """
+    if request.user.is_superuser:
+        return pages  # Superusuários podem ver todas as páginas
+
+    # Filtra apenas as páginas onde o usuário logado é o proprietário
+    return pages.filter(owner=request.user)
 
 
 from wagtail import hooks
-from django.utils.html import format_html
+from wagtail.admin.menu import MenuItem
+
+@hooks.register('construct_main_menu')
+def change_pages_menu(request, menu_items):
+    for item in menu_items:
+        if item.name == 'explorer':  # Identifica o menu "Pages"
+            item.label = "Folders"  # Substitua "Decks" pelo nome desejado
 
 
 
-@hooks.register('construct_page_edit_handler')
-def customize_flashcard_edit_handler(handler, request, context):
-    if hasattr(context['instance'], 'question_media'):
-        context['media_thumbnails_template'] = 'wagtailadmin/pages/edit_flashcard.html'
+
 
 
 
@@ -60,4 +64,17 @@ def add_custom_admin_js():
 
 
 
+from wagtail import hooks
+from wagtail.models import Page
+
+@hooks.register('construct_explorer_page_queryset')
+def filter_box_queryset(parent_page, pages, request):
+    """
+    Filtra os Boxes para exibir apenas os pertencentes ao usuário logado.
+    """
+    if request.user.is_superuser:
+        return pages  # Administradores podem ver todos os Boxes
+
+    # Filtra para que o usuário veja apenas os Boxes que ele possui
+    return pages.filter(owner=request.user)
 

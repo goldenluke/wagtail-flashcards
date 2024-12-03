@@ -1,0 +1,18 @@
+{% load wagtailadmin_tags %}
+{% block content %}
+<div>
+    <h3>Question Media Thumbnail:</h3>
+    {% if instance.question_media %}
+        <img src="{{ instance.question_media.url }}" style="max-height: 100px; max-width: 100px;">
+    {% else %}
+        <p>No question media</p>
+    {% endif %}
+
+    <h3>Answer Media Thumbnail:</h3>
+    {% if instance.answer_media %}
+        <img src="{{ instance.answer_media.url }}" style="max-height: 100px; max-width: 100px;">
+    {% else %}
+        <p>No answer media</p>
+    {% endif %}
+</div>
+{% endblock %}
