@@ -32,9 +32,17 @@
             {% formattedfield form.password %}
 
             <a class="reset-password" href="{% url 'account_reset_password' %}">
-                {% trans "Forgotten password?" %}
+
             </a>
         {% endblock %}
+
+
+        <div class="signup-option">
+    <p>
+        {% trans "Don't have an account?" %}
+        <a href="{% url 'account_signup' %}">{% trans "Sign up here" %}</a>.
+    </p>
+</div>
 
         <footer class="form-actions">
             <button
