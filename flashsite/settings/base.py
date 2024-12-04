@@ -132,11 +132,11 @@ LOGIN_REDIRECT_URL = '/'  # Redirect after login
 LOGOUT_REDIRECT_URL = '/'  # Redirect after logout
 
 # Email verification settings
-ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Can be 'mandatory', 'optional', or 'none'
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Can be 'mandatory', 'optional', or 'none'
+ACCOUNT_EMAIL_REQUIRED = False
 
 # Username settings
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Options: 'username', 'email', 'username_email'
+ACCOUNT_AUTHENTICATION_METHOD = 'username'  # Options: 'username', 'email', 'username_email'
 ACCOUNT_USERNAME_REQUIRED = True
 
 
