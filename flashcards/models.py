@@ -134,7 +134,7 @@ class FlashcardsIndexPage(Page):
     # Optional description or introduction for the index page
     chatgpt_answer = models.TextField(
         blank=True,
-        verbose_name="Paste here the answer from your favorite language model platform",
+        verbose_name="Paste here the answer from your favorite LLM",
         help_text="Use the following prompt: \"Transform the content below into flashcards in the format Question::Answer (one per line, without enumeration), where the questions are based on the key concepts from the text, according to the guidelines of SuperMemo by Piotr Wozniak. The text and the flashcards must be kept in the same language in which the content was provided.\"",
     )
     category = models.CharField(max_length=100, blank=True, null=True)
