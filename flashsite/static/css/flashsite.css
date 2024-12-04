@@ -144,6 +144,50 @@ header .btn-clone {
 
 }
 
+.folder-navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.folder-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px; /* Define uma largura máxima para manter a lista centralizada */
+    text-align: center;
+}
+
+.folder-item {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.folder-item a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centraliza os itens horizontalmente */
+}
+
+.folder-item a:hover {
+    text-decoration: underline;
+}
+
+.folder-item i.material-icons {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.folder-item .details {
+    margin-left: 0; /* Remove deslocamento lateral para centralização */
+    text-align: center; /* Centraliza o texto */
+}
+
 
 
 #selected-flashcard {

@@ -50,13 +50,36 @@ class FolderPage(Page):
     """
     Uma página simples para organizar FlashcardsIndexPage em pastas.
     """
+    description = models.TextField(
+        blank=True,
+        verbose_name="Description",
+        help_text="Provide a brief description for this folder.",
+    )
+    category = models.CharField(max_length=100, blank=True, null=True)
     subpage_types = ['flashcards.FlashcardsIndexPage', 'flashcards.FolderPage']  # Use o caminho completo para evitar erros
-    parent_page_types = ['flashcards.Box']
+    parent_page_types = ['flashcards.Box', 'flashcards.FolderPage']
+
+    content_panels = Page.content_panels + [
+        FieldPanel('description'),
+        FieldPanel('category'),# Adiciona o campo description ao painel de edição
+    ]
+
+    def serve(self, request):
+        # Obtém todos os filhos da FolderPage atual
+        child_pages = self.get_children().specific()
+
+        # Passa os dados para o template
+        return render(request, 'flashcards/folder_page.html', {
+            'page': self,
+            'child_pages': child_pages,
+        })
 
     class Meta:
         verbose_name = "Folder"
         verbose_name_plural = "Folders"
 
+    def is_folder_page(self):
+        return True
 
 class Flashcard(Orderable):
     # Relaciona cada Flashcard a um FlashcardsIndexPage
@@ -109,26 +132,33 @@ class FlashcardsIndexPage(Page):
     """A page that acts as an index for flashcards."""
 
     # Optional description or introduction for the index page
-    prompt = models.TextField(blank=True, help_text="Text to describe the flashcards.")
     chatgpt_answer = models.TextField(
         blank=True,
-        help_text="Paste the array of flashcards in the format: 'question::answer' (one per line).",
+        verbose_name="Paste here the answer from your favorite language model platform",
+        help_text="Use the following prompt: \"Transform the content below into flashcards in the format Question::Answer (one per line, without enumeration), where the questions are based on the key concepts from the text, according to the guidelines of SuperMemo by Piotr Wozniak. The text and the flashcards must be kept in the same language in which the content was provided.\"",
     )
     category = models.CharField(max_length=100, blank=True, null=True)
-
+    description = models.TextField(
+        blank=True,
+        verbose_name="Description",
+        help_text="Provide a brief description or introduction for this deck.",
+    )
     content_panels = Page.content_panels + [
-        FieldPanel('category'),
-        FieldPanel('prompt'),
         FieldPanel('chatgpt_answer'),
+        FieldPanel('description'),  # Add the new description field
+        FieldPanel('category'),
         InlinePanel('flashcards', label="Flashcards"),
     ]
 
     search_fields = Page.search_fields + [
-    index.SearchField('title'),
-    index.FilterField('owner'),
-    index.FilterField('category'),
+        index.SearchField('title'),
+        index.SearchField('description'),  # Enable search for the description field
+        index.FilterField('owner'),
+        index.FilterField('category'),
     ]
 
+    def is_flashcards_index_page(self):
+        return True
 
     def get_flashcards(self):
         # Retorna todos os flashcards associados a esta página

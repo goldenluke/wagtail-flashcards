@@ -24,7 +24,13 @@ class CloneFlashcardsMenuItem(ActionMenuItem):
         return reverse("copy_flashcards_index", args=[page.id])
 
 
-
+@hooks.register('construct_main_menu')
+def hide_help_and_reports_menu_items(request, menu_items):
+    # Filter out Help and Reports menu items by their name or URL
+    menu_items[:] = [
+        item for item in menu_items
+        if item.name not in ['help', 'reports']
+    ]
 
 
 from wagtail.models import Page

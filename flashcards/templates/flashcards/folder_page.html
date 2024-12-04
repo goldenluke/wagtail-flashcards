@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load i18n wagtailadmin_tags %}
+{% block content %}
+    <div class="folder-navigation">
+        <h1>{{ page.title }}</h1>
+        <div class="author-info">
+    {% avatar user=page.owner classname="avatar-medium" size="medium" %}
+    <p class="author-text">
+        by {{ page.owner.get_full_name }} ({{ page.owner.username }})
+    </p>
+</div>
+        <h3><strong>Description:</strong> {{ page.description }}</h3>
+        <hr>
+        <ul class="folder-list">
+            {% for child in page.get_children.live %}
+                <li class="folder-item">
+                    <a href="{{ child.url }}">
+                        {% if child.specific.is_folder_page %}
+                            <i class="material-icons">folder</i>
+                        {% elif child.specific.is_flashcards_index_page %}
+                            <i class="material-icons">note</i>
+                        {% else %}
+                            <i class="material-icons">note</i>
+                        {% endif %}
+                        <span class="title">{{ child.title }}</span>
+                    </a>
+                    <div class="details">
+                        <p><strong>Description:</strong> {{ child.specific.description|default:"No description" }}</p>
+                        <p><strong>Category:</strong> {{ child.specific.category|default:"Uncategorized" }}</p>
+                        <p><strong>Created:</strong> {{ child.first_published_at|date:"F j, Y" }}</p>
+                    </div>
+                </li>
+            {% empty %}
+                <p>No subpages found.</p>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
