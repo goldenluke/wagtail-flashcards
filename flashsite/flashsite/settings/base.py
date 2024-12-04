@@ -18,10 +18,15 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 SITE_ID = 1
 
+import os
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'sua_chave_secreta_segura_aqui')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-
+ALLOWED_HOSTS = ['memorai.pythonanywhere.com']
 # Application definition
 
 INSTALLED_APPS = [
