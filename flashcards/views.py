@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 logger = logging.getLogger(__name__)
 
 
+
+
 def flashcard_view(request, username, page_id):
     # Tenta obter o usuário pelo username
     user = get_object_or_404(User, username=username)
