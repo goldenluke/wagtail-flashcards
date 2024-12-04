@@ -568,32 +568,43 @@ li.no-difficulty a:hover {
 /* Botão de fechar (dentro do painel lateral) */
 .close-btn {
     position: absolute; /* Fixa o botão dentro do painel */
-    top: 10px; /* Ajuste a distância do topo */
-    right: 10px; /* Ajuste a distância da borda direita */
-    font-size: 24px; /* Tamanho da fonte */
+    right: 0; /* Ajuste a distância da borda direita */
+    font-size: 20px; /* Tamanho da fonte */
     background: none; /* Sem fundo */
     border: none; /* Sem borda */
     color: white; /* Cor do texto */
-    background-color: #2e1f5e;
+    background-color: #2e1f5e; /* Fundo do botão */
+    padding: 10px 10px; /* Padding interno */
     cursor: pointer; /* Indica que é clicável */
     display: none; /* Oculto por padrão */
     z-index: 1100; /* Garante que fique acima de outros elementos */
-    padding: 5px; /* Padding interno para clique mais fácil */
+    height: 50px;
+    width: 50px;
+
 }
 
 /* Botão de abrir (fora do painel lateral) */
 .open-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    font-size: 24px;
-    background-color: #2e1f5e;
-    color: white;
-    border: none;
-    padding: 10px 10px;
-    cursor: pointer;
-    z-index: 1100;
+    position: fixed; /* Fixa o botão fora do painel */
+    right: 0px; /* Move para o lado direito */
+    font-size: 20px; /* Tamanho da fonte */
+    background-color: #2e1f5e; /* Fundo do botão */
+    color: white; /* Cor do texto */
+    border: none; /* Sem borda */
+    padding: 10px 10px; /* Padding interno */
+    cursor: pointer; /* Indica que é clicável */
+    z-index: 1100; /* Garante que fique acima de outros elementos */
+    height: 50px;
+    width: 50px;
 }
+
+.open-btn .material-icons,
+.close-btn .material-icons {
+    font-size: 20px; /* Ajuste do tamanho do ícone */
+    line-height: 1; /* Ajuste de altura da linha */
+    opacity: 0.8;
+}
+
 
 /* Quando o painel está aberto */
 .side-panel.open ~ .open-btn {
