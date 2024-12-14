@@ -37,9 +37,18 @@ class Box(Page):
         """
         Restringe o acesso ao `Box` para apenas o `owner`.
         """
+        # Verifica se o usuário atual é o proprietário
         if self.owner != request.user:
             return redirect('wagtailadmin_home')
-        return super().serve(request)
+
+        # Obtém as páginas filhas específicas
+        child_pages = self.get_children().specific()
+
+        # Renderiza a página com o template
+        return render(request, 'flashcards/box_page.html', {
+            'page': self,
+            'child_pages': child_pages,
+        })
 
     class Meta:
         verbose_name = "Folders"
@@ -172,6 +181,17 @@ class FlashcardsIndexPage(Page):
         if request.path != f"/{username}/{self.id}/":
             return redirect("flashcard_view", username=username, page_id=self.id)
 
+    def flashcards_count_by_difficulty(self):
+        flashcards = Flashcard.objects.filter(index_page=self)
+        return {
+            'easy': flashcards.filter(difficulty='easy').count(),
+            'medium': flashcards.filter(difficulty='medium').count(),
+            'difficult': flashcards.filter(difficulty='difficult').count(),
+        }
+
+    def get_preview_modes(self):
+        # Retorna uma lista vazia para desabilitar o preview
+        return []
 
         # Obter flashcards associados
         flashcards = self.get_flashcards()

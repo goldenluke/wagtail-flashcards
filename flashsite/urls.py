@@ -9,7 +9,7 @@ from flashcards.views import flashcard_view
 
 from search import views as search_views
 
-from flashcards.views import copy_flashcards_index, import_flashcards, flashcard_interaction, flashcards_list, select_flashcard, assign_difficulty
+from flashcards.views import copy_flashcards_index, import_flashcards, flashcard_interaction, flashcards_list, select_flashcard, assign_difficulty, flashcards_difficulty_count
 
 from django.conf.urls.static import static
 from django.http import HttpResponseRedirect
@@ -30,6 +30,7 @@ urlpatterns = [
     path('flashcards/<int:page_id>/list/', flashcards_list, name='flashcards_list'),
     path('flashcards/<int:page_id>/select/', select_flashcard, name='select_flashcard'),
     path('flashcards/<int:page_id>/difficulty/', assign_difficulty, name='assign_difficulty'),
+    path('flashcards/<int:page_id>/difficulty-count/', flashcards_difficulty_count, name='flashcards_difficulty_count'),
 
     path('', lambda request: HttpResponseRedirect('/admin/')),
     re_path(r'', include(wagtail_urls)),

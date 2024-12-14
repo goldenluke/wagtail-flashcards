@@ -19,7 +19,32 @@ if (!pageCurrentId) {
 }
 
 
+const loadDifficultyCounts = async () => {
+    console.log("loadDifficultyCounts called.");
+    try {
+        const response = await fetch(`/flashcards/${pageCurrentId}/difficulty-count/`, {
+            method: 'GET',
+            headers: {
+                'x-requested-with': 'XMLHttpRequest',
+            },
+        });
 
+        console.log("Response received:", response);
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Difficulty counts:", data);
+
+            document.getElementById('easy-count').textContent = data.easy || 0;
+            document.getElementById('medium-count').textContent = data.medium || 0;
+            document.getElementById('difficult-count').textContent = data.difficult || 0;
+        } else {
+            console.error("Failed to fetch difficulty counts:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error in loadDifficultyCounts:", error);
+    }
+};
 
     const showLoading = () => {
         const loadingIndicator = document.getElementById('loader');
@@ -557,6 +582,7 @@ const assignDifficulty = async (difficulty) => {
 
             // Atualiza o flashcard selecionado
             updateSelectedFlashcard(data);
+            loadDifficultyCounts();
         } else {
             const errorText = await response.text();
             console.error('Failed to assign difficulty:', errorText);
@@ -606,6 +632,7 @@ const initializeFlashcard = async () => {
             updateSelectedFlashcard(data);
             updateFlashcardsListStyle(data.id, data.difficulty);
             updateDifficultyButtons(data.difficulty);
+            loadDifficultyCounts();
         } else {
             console.error('Erro ao carregar o flashcard selecionado:', await response.text());
         }
@@ -637,6 +664,7 @@ await initializeFlashcard();
 
             // Faz a requisição para atualizar no backend
             assignDifficulty(difficulty);
+            loadDifficultyCounts();
         });
     });
 });

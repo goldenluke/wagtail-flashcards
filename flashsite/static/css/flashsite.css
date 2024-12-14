@@ -93,6 +93,57 @@ header form {
     font-size: 14px;
 }
 
+
+.title-section {
+    display: flex; /* Alinha os itens em uma única linha */
+    justify-content: space-between; /* Espaçamento entre os itens */
+    align-items: center; /* Alinha verticalmente no centro */
+}
+
+.title-section h1 {
+    margin: 0; /* Remove a margem padrão do título */
+    font-size: 24px; /* Ajuste o tamanho conforme necessário */
+}
+
+.flashcards-summary {
+    display: flex; /* Alinha os flashcards em linha */
+    gap: 1px; /* Espaçamento entre os quadrados */
+    margin-left: 10px;
+}
+
+.flashcard-box {
+    width: 20px; /* Largura do quadrado */
+    height: 32px; /* Altura do quadrado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    text-align: center;
+    border: 3px solid black;
+    color: black;
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+.flashcard-box.easy {
+    border-color: #4CAF50; /* Verde */
+    color: #4CAF50;
+}
+
+.flashcard-box.medium {
+    border-color: #FF9800; /* Amarelo */
+    color: #FF9800;
+}
+
+.flashcard-box.difficult {
+    border-color: #F44336; /* Vermelho */
+    color: #F44336;
+}
+
+
+
+
+
 /* Estilo do botão Clone Deck */
 header .btn-clone {
     align-items: center; /* Centraliza verticalmente o ícone e o texto */
@@ -787,4 +838,19 @@ ul {
     transition: border-color 0.3s, background-color 0.3s;
 }
 
+.folder-item a {
+    text-decoration: none; /* Sem sublinhado por padrão */
+    color: inherit; /* Herda a cor do texto */
+}
+
+.folder-item a:hover {
+    text-decoration: none; /* Impede o sublinhado ao passar o mouse */
+}
+
+
+
+
+.w-w-slim-header {
+    display: none !important;
+}
 

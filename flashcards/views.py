@@ -267,7 +267,22 @@ def assign_difficulty(request, page_id):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@csrf_exempt
+def flashcards_difficulty_count(request, page_id):
+    """
+    Retorna o número de flashcards por dificuldade como JSON.
+    """
+    index_page = get_object_or_404(FlashcardsIndexPage, id=page_id)
+    counts = index_page.flashcards_count_by_difficulty()  # Presume que essa função já existe no modelo.
 
+    # Certifique-se de retornar valores padrão caso algum contador esteja ausente.
+    response_data = {
+        'easy': counts.get('easy', 0),
+        'medium': counts.get('medium', 0),
+        'difficult': counts.get('difficult', 0),
+    }
+
+    return JsonResponse(response_data)
 
 
 from django.utils.text import slugify

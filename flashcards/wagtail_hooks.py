@@ -58,6 +58,8 @@ def change_pages_menu(request, menu_items):
 
 
 
+from wagtail import hooks
+
 
 
 

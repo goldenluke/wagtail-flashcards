@@ -1,0 +1,10 @@
+{% load i18n %}
+{% if status %}
+    <span class="status-tag status-tag--{{ status.lower }}">
+        {% if status == 'live' %}
+            {% trans "Published" %}
+        {% else %}
+            {{ status }}
+        {% endif %}
+    </span>
+{% endif %}

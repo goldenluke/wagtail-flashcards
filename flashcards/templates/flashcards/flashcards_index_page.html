@@ -10,9 +10,23 @@
 <div id="main-container">
 <div class="loader" id="loader"></div>
 <header>
-
+    <div class="title-section">
     <h1>{{ index_page.title }}</h1>
+    <div class="flashcards-summary">
+    <div class="flashcard-box easy">
+        <span id="easy-count"></span>
 
+    </div>
+    <div class="flashcard-box medium">
+        <span id="medium-count"></span>
+
+    </div>
+    <div class="flashcard-box difficult">
+        <span id="difficult-count"></span>
+
+    </div>
+</div>
+    </div>
 
 <div class="author-info">
     {% avatar user=index_page.owner classname="avatar-medium" size="medium" %}
@@ -31,6 +45,10 @@
 </form>
 {% endif %}
 </header>
+
+
+
+
 
 {% if current_flashcard %}
 <div id="selected-flashcard" data-id="{{ current_flashcard.id }}"  class="{{ current_flashcard.difficulty|default:'no-difficulty' }}">
